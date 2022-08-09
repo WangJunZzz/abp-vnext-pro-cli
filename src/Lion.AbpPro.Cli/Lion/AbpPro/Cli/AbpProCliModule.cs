@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +10,7 @@ using Volo.Abp.Modularity;
 namespace Lion.AbpPro.Cli;
 
 [DependsOn(
-    typeof(AbpProCliCoreModule),
+    typeof(Lion.AbpPro.Cli.AbpProCliCoreModule),
     typeof(AbpAutofacModule)
 )]
 public class AbpProCliModule : AbpModule

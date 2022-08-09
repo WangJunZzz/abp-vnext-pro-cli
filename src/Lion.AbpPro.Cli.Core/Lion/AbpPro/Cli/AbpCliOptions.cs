@@ -1,4 +1,4 @@
-﻿namespace Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli;
+﻿namespace Lion.AbpPro.Cli;
 
 public class AbpCliOptions
 {
@@ -10,9 +10,9 @@ public class AbpCliOptions
     public bool CacheTemplates { get; set; } = true;
 
     /// <summary>
-    /// Default value: "CLI".
+    /// Default value: "lion-abp".
     /// </summary>
-    public string ToolName { get; set; } = "CLI";
+    public string ToolName { get; set; } = "lion-abp";
 
     public AbpCliOptions()
     {

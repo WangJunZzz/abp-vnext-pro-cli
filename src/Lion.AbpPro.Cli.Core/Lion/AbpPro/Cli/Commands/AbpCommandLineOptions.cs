@@ -1,6 +1,6 @@
 ﻿using Volo.Abp;
 
-namespace Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli.Commands;
+namespace Lion.AbpPro.Cli.Commands;
 
 public class AbpCommandLineOptions : Dictionary<string, string>
 {

@@ -1,49 +1,36 @@
 ﻿using System.Text;
+using Lion.AbpPro.Cli.Args;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
 
-namespace Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli.Commands;
+namespace Lion.AbpPro.Cli.Commands;
 
-public class HelpCommand: IConsoleCommand, ITransientDependency
+public class HelpCommand : IConsoleCommand, ITransientDependency
 {
-  public const string Name = "help";
-    
-    public ILogger<HelpCommand> Logger { get; set; }
-    protected AbpCliOptions AbpCliOptions { get; }
-    protected IServiceScopeFactory ServiceScopeFactory { get; }
+    public const string Name = "help";
+    private readonly ILogger<HelpCommand> _logger;
+    private readonly AbpCliOptions _abpCliOptions;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public HelpCommand(IOptions<AbpCliOptions> cliOptions,
-        IServiceScopeFactory serviceScopeFactory)
+    public HelpCommand(IOptions<AbpCliOptions> abpCliOptions, ILogger<HelpCommand> logger, IServiceScopeFactory serviceScopeFactory)
     {
-        ServiceScopeFactory = serviceScopeFactory;
-        Logger = NullLogger<HelpCommand>.Instance;
-        AbpCliOptions = cliOptions.Value;
+        _logger = logger;
+        _serviceScopeFactory = serviceScopeFactory;
+        _abpCliOptions = abpCliOptions.Value;
     }
 
     public Task ExecuteAsync(CommandLineArgs commandLineArgs)
     {
-        if (string.IsNullOrWhiteSpace(commandLineArgs.Target))
-        {
-            Logger.LogInformation(GetUsageInfo());
-            return Task.CompletedTask;
-        }
+        
+        var commandType = _abpCliOptions.Commands[Name];
 
-        if (!AbpCliOptions.Commands.ContainsKey(commandLineArgs.Target))
-        {
-            Logger.LogWarning($"There is no command named {commandLineArgs.Target}.");
-            Logger.LogInformation(GetUsageInfo());
-            return Task.CompletedTask;
-        }
-
-        var commandType = AbpCliOptions.Commands[commandLineArgs.Target];
-
-        using (var scope = ServiceScopeFactory.CreateScope())
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
             var command = (IConsoleCommand)scope.ServiceProvider.GetRequiredService(commandType);
-            Logger.LogInformation(command.GetUsageInfo());
+            _logger.LogInformation(command.GetUsageInfo());
         }
 
         return Task.CompletedTask;
@@ -52,19 +39,19 @@ public class HelpCommand: IConsoleCommand, ITransientDependency
     public string GetUsageInfo()
     {
         var sb = new StringBuilder();
-        
-        sb.AppendLine("指引:");
-        sb.AppendLine("    lion-abp <command> <target> [options]");
+
+        sb.AppendLine("查看命令帮助:");
+        sb.AppendLine("    lion-abp help");
         sb.AppendLine("命令列表:");
 
-        foreach (var command in AbpCliOptions.Commands.ToArray())
+        foreach (var command in _abpCliOptions.Commands.ToArray())
         {
             string shortDescription;
 
-            using (var scope = ServiceScopeFactory.CreateScope())
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
                 shortDescription = ((IConsoleCommand)scope.ServiceProvider
-                        .GetRequiredService(command.Value)).GetShortDescription();
+                    .GetRequiredService(command.Value)).GetShortDescription();
             }
 
             sb.Append("    > ");
@@ -74,15 +61,11 @@ public class HelpCommand: IConsoleCommand, ITransientDependency
             sb.AppendLine(shortDescription);
         }
 
- 
-        sb.AppendLine("查看命令帮助");
-        sb.AppendLine("    lion-abp help <command>");
-
         return sb.ToString();
     }
 
     public string GetShortDescription()
     {
-        return "Show command line help. Write ` abp help <command> `";
+        return "lion-abp help";
     }
 }

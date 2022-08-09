@@ -6,7 +6,8 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>abp-pro</ToolCommandName>
+        <ToolCommandName>lion-abp</ToolCommandName>
+        <RootNamespace />
     </PropertyGroup>
 
   
@@ -21,14 +22,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="appsettings.json">
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
+      <ProjectReference Include="..\Lion.AbpPro.Cli.Core\Lion.AbpPro.Cli.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lion.AbpPro.Cli.Core\Lion.AbpPro.Cli.Core.csproj" />
+      <Content Include="appsettings.json">
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

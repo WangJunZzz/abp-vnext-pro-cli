@@ -1,4 +1,4 @@
-﻿namespace Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli;
+﻿namespace Lion.AbpPro.Cli;
 
 public class CliPaths
 {

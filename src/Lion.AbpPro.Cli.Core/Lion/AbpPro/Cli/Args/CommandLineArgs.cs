@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using JetBrains.Annotations;
+using Lion.AbpPro.Cli.Commands;
 
-namespace Lion.AbpPro.Cli.Core.Lion.AbpPro.Cli.Commands;
+namespace Lion.AbpPro.Cli.Args;
 
 public class CommandLineArgs
 {
