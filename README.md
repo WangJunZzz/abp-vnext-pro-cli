@@ -1,12 +1,19 @@
-https://www.cnblogs.com/stulzq/p/9127030.html
-dotnet pack
-dotnet tool install -g lion.abp --add-source ./
+## 安装
+```charp
+dotnet tool install Lion.AbpPro.Cli -g
+```
+## 更新
+```charp
 dotnet tool uninstall Lion.AbpPro.Cli -g
-dotnet tool update -g lion.abp --add-source ./
+```
 
-dotnet nuget push AppLogger.1.0.0.nupkg --api-key qz2jga8pl3dvn2akksyquwcs9ygggg4exypy3bhxy6w6x6 --source https://api.nuget.org/v3/index.json
+## 卸载
+```charp
+dotnet tool uninstall Lion.AbpPro.Cli -g
+```
 
-lion.abp new abp-vnext-pro -c asdf -p asdf -v 5.3.2.1
 
-
-dotnet pack -c Release /p:Version=1.2.3
+## 生成Lion.AbpPro模板
+```charp
+lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -o 输出路径(可选) -v 版本号(可选)
+```
