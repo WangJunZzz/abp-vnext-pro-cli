@@ -7,7 +7,7 @@ dotnet tool install Lion.AbpPro.Cli -g
 dotnet tool uninstall Lion.AbpPro.Cli -g
 ```
 
-## 卸载
+## 更新
 ```charp
 dotnet tool update Lion.AbpPro.Cli -g
 ```
