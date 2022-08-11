@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 using Volo.Abp.Domain.Services;
 
 namespace Lion.AbpPro.Cli.NuGet;
@@ -21,39 +23,80 @@ public class NuGetService : DomainService
     public async Task<string> GetLatestVersionOrNullAsync(string packageId)
     {
         var versionList = await GetPackageVersionsFromNuGetOrgAsync(packageId);
-        if (versionList == null)
-        {
-            Logger.LogError("无法从nuget.org获取包版本: " + packageId);
-        }
-        return versionList.OrderByDescending(e => e).FirstOrDefault();
+        return versionList.MaxBy(e => e);
     }
 
     private async Task<List<string>> GetPackageVersionsFromNuGetOrgAsync(string packageId)
     {
         var url = $"https://api.nuget.org/v3-flatcontainer/{packageId.ToLowerInvariant()}/index.json";
-        return await GetPackageVersionListFromUrlAsync(url);
+        return await GetPackageVersionListFromUrlWithRetryAsync(url);
+    }
+
+
+    private async Task<List<string>> GetPackageVersionListFromUrlWithRetryAsync(string url)
+    {
+        var exceptionRetryPolicy = CreateExceptionRetryPolicy();
+        var timeoutRetryPolicy = CreateTimeoutRetryPolicy();
+        var policy = Policy.WrapAsync(exceptionRetryPolicy,timeoutRetryPolicy);
+
+        var result = await policy.ExecuteAsync(async () => await GetPackageVersionListFromUrlAsync(url));
+        return result;
     }
 
     private async Task<List<string>> GetPackageVersionListFromUrlAsync(string url)
     {
-        try
-        {
-            var client = _clientFactory.CreateClient();
+        var client = _clientFactory.CreateClient();
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        var content = await response.Content.ReadAsStringAsync();
+        if (content.IsNullOrWhiteSpace()) return null;
+        return JsonConvert.DeserializeObject<NuGetVersionResultDto>(content).Versions;
+    }
 
-            var response = await client.GetAsync(url);
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+    /// <summary>
+    /// 创建异常重试策略
+    /// </summary>
+    private AsyncRetryPolicy CreateExceptionRetryPolicy()
+    {
+        var policy = Policy.Handle<Exception>((ex) =>
             {
-                return null;
-            }
+                var result = !ex.Message.IsNullOrWhiteSpace();
+                return result;
+            })
+            .WaitAndRetryAsync(LionAbpProCliConsts.HttpRetryCount,
+                (retryCount) => TimeSpan.FromSeconds(Math.Pow(2, retryCount)), (ex, time, retryCount, context) =>
+                {
+                    if (retryCount == LionAbpProCliConsts.HttpRetryCount)
+                    {
+                        Logger.LogError($"请求nuget.org失败,已重试第 {retryCount} 次.");
+                    }
+                });
 
-            var content = await response.Content.ReadAsStringAsync();
-            if (content.IsNullOrWhiteSpace()) return null;
-            return JsonConvert.DeserializeObject<NuGetVersionResultDto>(content).Versions;
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        return policy;
+    }
+
+    /// <summary>
+    /// 创建超时重试策略
+    /// </summary>
+    private AsyncRetryPolicy CreateTimeoutRetryPolicy()
+    {
+        var timeOutPolicy = Policy.Handle<Exception>((ex) =>
+            {
+                var result =
+                    ex.InnerException != null &&
+                    ex.InnerException.GetType() == typeof(TimeoutException);
+                return result;
+            })
+            .WaitAndRetryAsync(LionAbpProCliConsts.HttpRetryCount,
+                (retryCount) => TimeSpan.FromSeconds(Math.Pow(2, retryCount)),
+                (ex, time, retryCount, context) =>
+                {
+                    if (retryCount == LionAbpProCliConsts.HttpRetryCount)
+                    {
+                        Logger.LogError($"请求nuget.org超时，已重试第 {retryCount} 次,请重新执行命令.");
+                    }
+                });
+        return timeOutPolicy;
     }
 }
 

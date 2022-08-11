@@ -10,7 +10,6 @@ namespace Lion.AbpPro.Cli;
 
 public class CliService : DomainService
 {
-
     private readonly ICommandLineArgumentParser _commandLineArgumentParser;
     private readonly ICommandSelector _commandSelector;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -34,10 +33,9 @@ public class CliService : DomainService
     {
         Console.WriteLine("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
         Console.WriteLine("请输入 lion.abp help 查看所有命令");
+        
+        await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
 
-#if !DEBUG
-         await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
-#endif
         try
         {
             await RunInternalAsync();

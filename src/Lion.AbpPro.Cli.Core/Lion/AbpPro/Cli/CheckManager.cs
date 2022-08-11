@@ -42,10 +42,9 @@ public class CheckManager : DomainService
                 Logger.LogWarning($"dotnet tool update -g {packageId}");
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Logger.LogWarning("检查 Lion.AbpPro.Cli 版本失败.");
-            Logger.LogWarning(e.Message);
         }
     }
 
