@@ -31,9 +31,4 @@ public class LionAbpProReplaceOptions
     /// 需要排除的文件
     /// </summary>
     public string ExcludeFiles { get; set; }
-
-    /// <summary>
-    /// 默认下载路径
-    /// </summary>
-    public string DownPath { get; set; }
 }

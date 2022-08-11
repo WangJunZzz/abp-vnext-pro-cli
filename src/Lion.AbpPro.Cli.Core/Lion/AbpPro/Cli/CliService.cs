@@ -4,31 +4,40 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.Domain.Services;
 
 namespace Lion.AbpPro.Cli;
 
-public class CliService : ITransientDependency
+public class CliService : DomainService
 {
-    private readonly ILogger<CliService> _logger;
+
     private readonly ICommandLineArgumentParser _commandLineArgumentParser;
     private readonly ICommandSelector _commandSelector;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly AbpCliOptions _abpCliOptions;
+    private readonly CheckManager _checkManager;
 
-    public CliService(ICommandLineArgumentParser commandLineArgumentParser, ILogger<CliService> logger, ICommandSelector commandSelector, IServiceScopeFactory serviceScopeFactory,
-        IOptions<AbpCliOptions> abpCliOptions)
+    public CliService(ICommandLineArgumentParser commandLineArgumentParser,
+        ICommandSelector commandSelector,
+        IServiceScopeFactory serviceScopeFactory,
+        IOptions<AbpCliOptions> abpCliOptions,
+        CheckManager checkManager)
     {
         _commandLineArgumentParser = commandLineArgumentParser;
-        _logger = logger;
         _commandSelector = commandSelector;
         _serviceScopeFactory = serviceScopeFactory;
+        _checkManager = checkManager;
         _abpCliOptions = abpCliOptions.Value;
     }
 
     public async Task RunAsync(string[] args)
     {
-        _logger.LogInformation("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
-        _logger.LogInformation("请输入 lion-abp help 查看所有命令");
+        Console.WriteLine("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
+        Console.WriteLine("请输入 lion.abp help 查看所有命令");
+
+#if !DEBUG
+         await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
+#endif
         try
         {
             await RunInternalAsync();
@@ -36,7 +45,7 @@ public class CliService : ITransientDependency
 
         catch (Exception ex)
         {
-            _logger.LogException(ex);
+            Logger.LogException(ex);
         }
     }
 
@@ -66,7 +75,7 @@ public class CliService : ITransientDependency
 
             catch (Exception ex)
             {
-                _logger.LogException(ex);
+                Logger.LogException(ex);
             }
 
             promptInput = GetPromptInput();

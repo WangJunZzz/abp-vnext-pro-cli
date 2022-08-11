@@ -12,17 +12,19 @@ namespace Lion.AbpPro.Cli;
 
 public class GenerateCodeManager : DomainService
 {
-    private readonly ILogger<GenerateCodeManager> _logger;
     private readonly LionAbpProOptions _lionAbpProOptions;
     private readonly GithubManager _githubManager;
     private readonly ZipManager _zipManager;
     private readonly ReplaceManager _replaceManager;
     private readonly FileManager _fileManager;
 
-    public GenerateCodeManager(ILogger<GenerateCodeManager> logger, IOptions<LionAbpProOptions> lionAbpProOptions, GithubManager githubManager, ZipManager zipManager, ReplaceManager replaceManager,
+    public GenerateCodeManager(
+        IOptions<LionAbpProOptions> lionAbpProOptions,
+        GithubManager githubManager,
+        ZipManager zipManager,
+        ReplaceManager replaceManager,
         FileManager fileManager)
     {
-        _logger = logger;
         _githubManager = githubManager;
         _zipManager = zipManager;
         _replaceManager = replaceManager;
@@ -30,49 +32,63 @@ public class GenerateCodeManager : DomainService
         _lionAbpProOptions = lionAbpProOptions.Value;
     }
 
-    public async Task LionAbpProAsync(string companyName, string projectName, string version, string output)
+    /// <summary>
+    /// 生成Abp-Vnext-Pro
+    /// </summary>
+    /// <param name="companyName">公司名称</param>
+    /// <param name="projectName">项目名称</param>
+    /// <param name="version">版本</param>
+    /// <param name="output">输出路径</param>
+    public async Task LionAbpProAsync(
+        string companyName,
+        string projectName,
+        string version,
+        string output)
     {
         try
         {
-            _logger.LogInformation($"正在获取{_lionAbpProOptions.Github.RepositoryName}...");
+            Logger.LogInformation($"正在获取{_lionAbpProOptions.Github.RepositoryName}...");
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, _lionAbpProOptions.Github.Token, version);
-            _logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}下载中...");
+
 
             output = GetOutput(output, projectName);
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}项目生成中...");
+            // 源码下载路径
+            var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProOptions.Github.RepositoryName, release.TagName) + ".zip";
 
-            var downFilePath = Path.Combine(_lionAbpProOptions.Replace.DownPath, _lionAbpProOptions.Github.RepositoryName, release.TagName) + ".zip";
-            // 下载源码
+            // 下载源码路径
             await _githubManager.DownloadAsync(release.DownloadUrl, downFilePath);
-            // 解压
+
+            // 解压路径
             var targetPath = downFilePath.Replace(".zip", "");
 
             _zipManager.ExtractZips(downFilePath, targetPath);
 
-            _logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}下载完成.");
 
-            _fileManager.Copy(Path.Combine(targetPath, $"{_lionAbpProOptions.Github.RepositoryName}-{release.TagName}"), output);
+            //将解压之后的文件复制到输出目录
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProOptions.Github.RepositoryName}-{release.TagName}"), output, _lionAbpProOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(
-                output,
-                _lionAbpProOptions.Replace.OldCompanyName,
-                _lionAbpProOptions.Replace.OldProjectName,
-                companyName,
-                projectName,
+            _replaceManager.ReplaceTemplates(output, _lionAbpProOptions.Replace.OldCompanyName, _lionAbpProOptions.Replace.OldProjectName, companyName, projectName,
                 _lionAbpProOptions.Replace.ReplaceSuffix);
-            _logger.LogInformation($"项目生成成功.");
-            _logger.LogInformation($"生成项目地址：{output}");
-        }
-        catch (UserFriendlyException ex)
-        {
-            _logger.LogError($"{ex.Message}");
+            
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}生成成功.");
+            Logger.LogInformation($"项目地址");
+            Logger.LogInformation($"{output}");
         }
         catch (Exception ex)
         {
-            _logger.LogError($"程序异常：{ex.Message}");
+            Logger.LogError($"程序异常：{ex.Message}");
         }
     }
 
-    private string GetOutput(string output, string projectName)
+    /// <summary>
+    /// 获取代码输出路径
+    /// </summary>
+    /// <param name="output">-o 用户输入地址</param>
+    /// <param name="projectName">项目名称</param>
+    /// <returns>string</returns>
+    private string GetOutput(string output,
+        string projectName)
     {
         if (output.IsNullOrWhiteSpace())
         {
@@ -86,7 +102,7 @@ public class GenerateCodeManager : DomainService
             }
             else
             {
-                output = Path.Combine(Directory.GetCurrentDirectory(), projectName);
+                output = Path.Combine(Directory.GetCurrentDirectory(), output, projectName);
             }
         }
 

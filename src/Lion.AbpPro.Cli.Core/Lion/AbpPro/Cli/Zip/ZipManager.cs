@@ -7,20 +7,13 @@ namespace Lion.AbpPro.Cli.Zip;
 
 public class ZipManager : DomainService
 {
-    private readonly ILogger<ZipManager> _logger;
-
-    public ZipManager(ILogger<ZipManager> logger)
-    {
-        _logger = logger;
-    }
-
     /// <summary>
     /// 解压zip文件
     /// </summary>
     /// <param name="sourcePath">解压文件地址</param>
     /// <param name="targetPath">解压文件</param>
-    /// <returns></returns>
-    public void ExtractZips(string sourcePath, string targetPath)
+    public void ExtractZips(string sourcePath,
+        string targetPath)
     {
         Check.NotNullOrWhiteSpace(sourcePath, nameof(sourcePath));
         Check.NotNullOrWhiteSpace(targetPath, nameof(targetPath));

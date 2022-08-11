@@ -1,0 +1,19 @@
+﻿<Project>
+
+
+    <ItemGroup>
+
+        <PackageReference Update="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Update="Serilog.Extensions.Hosting" Version="4.2.0" />
+        <PackageReference Update="Serilog.Extensions.Logging" Version="3.1.0" />
+        <PackageReference Update="Serilog.Sinks.Async" Version="1.5.0" />
+        <PackageReference Update="Serilog.Sinks.Console" Version="4.0.1" />
+        <PackageReference Update="Serilog.Sinks.File" Version="5.0.0" />
+
+        <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Update="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Update="Octokit" Version="2.0.0" />
+        <PackageReference Update="Volo.Abp.Ddd.Domain" Version="5.3.2" />
+        <PackageReference Update="Volo.Abp.Autofac" Version="5.3.2" />
+    </ItemGroup>
+</Project>

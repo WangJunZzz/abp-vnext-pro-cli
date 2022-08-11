@@ -6,7 +6,7 @@ public interface IConsoleCommand
 {
     Task ExecuteAsync(CommandLineArgs commandLineArgs);
 
-    string GetUsageInfo();
+    void GetUsageInfo();
 
     string GetShortDescription();
 }

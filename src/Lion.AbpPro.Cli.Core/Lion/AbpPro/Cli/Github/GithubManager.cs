@@ -9,12 +9,10 @@ namespace Lion.AbpPro.Cli.Github;
 public class GithubManager : DomainService
 {
     private readonly IConfiguration _configuration;
-    private readonly ILogger<GithubManager> _logger;
 
-    public GithubManager(IConfiguration configuration, ILogger<GithubManager> logger)
+    public GithubManager(IConfiguration configuration)
     {
         _configuration = configuration;
-        _logger = logger;
     }
 
     /// <summary>
@@ -26,7 +24,10 @@ public class GithubManager : DomainService
     /// <param name="version">版本</param>
     /// <returns>Uri</returns>
     /// <exception cref="UserFriendlyException"></exception>
-    public async Task<GithubReleaseResult> GetReleaseVersionUrlAsync(string author, string repositoryName, string token, string version = "")
+    public async Task<GithubReleaseResult> GetReleaseVersionUrlAsync(string author,
+        string repositoryName,
+        string token,
+        string version = "")
     {
         try
         {
@@ -50,7 +51,7 @@ public class GithubManager : DomainService
             if (release != null)
             {
                 var result = new GithubReleaseResult();
-                _logger.LogInformation($"{repositoryName}：{release.TagName}");
+                Logger.LogInformation($"{repositoryName}：{release.TagName}");
                 result.DownloadUrl = new Uri($"https://github.com/{author}/{repositoryName}/archive/refs/tags/{release.TagName}.zip");
                 result.TagName = release.TagName;
                 return result;
@@ -62,15 +63,15 @@ public class GithubManager : DomainService
         }
         catch (NotFoundException)
         {
-            _logger.LogError($"版本不存在.");
+            Logger.LogError($"版本不存在.");
         }
         catch (RateLimitExceededException)
         {
-            _logger.LogError($"访问Github API超过了限制，请稍后再试.");
+            Logger.LogError($"访问Github API超过了限制，请稍后再试.");
         }
         catch (Exception)
         {
-            _logger.LogError($"获取{repositoryName}失败.");
+            Logger.LogError($"获取{repositoryName}失败.");
             throw;
         }
 
@@ -82,11 +83,12 @@ public class GithubManager : DomainService
     /// </summary>
     /// <param name="uri">下载地址</param>
     /// <param name="path">下载保存路径</param>
-    public async Task DownloadAsync(Uri uri, string path)
+    public async Task DownloadAsync(Uri uri,
+        string path)
     {
         try
         {
-            if(File.Exists(path)) return;
+            if (File.Exists(path)) return;
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetAsync(uri);
@@ -97,6 +99,7 @@ public class GithubManager : DomainService
                 {
                     Directory.CreateDirectory(pathDirectory);
                 }
+
                 using (FileStream fileStream = new FileStream(path, System.IO.FileMode.Create, FileAccess.Write, FileShare.None))
                 {
                     await response.Content.CopyToAsync(fileStream);
@@ -105,8 +108,14 @@ public class GithubManager : DomainService
         }
         catch (Exception e)
         {
-           _logger.LogError("下载源码失败：" + e.Message);
+            Logger.LogError("下载源码失败：" + e.Message);
         }
-    
     }
+}
+
+public class GithubReleaseResult
+{
+    public Uri DownloadUrl { get; set; }
+    
+    public string TagName { get; set; }
 }

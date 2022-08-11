@@ -14,7 +14,23 @@ public class AbpProCliCoreModule : AbpModule
     {
         Configure<AbpCliOptions>(options => { options.Commands[HelpCommand.Name] = typeof(HelpCommand); });
         Configure<AbpCliOptions>(options => { options.Commands[NewCommand.Name] = typeof(NewCommand); });
-        context.Services.Configure<LionAbpProOptions>(context.Services.GetConfiguration().GetSection("LionAbpPro"));
+
+        context.Services.AddHttpClient();
+        context.Services.Configure<LionAbpProOptions>(options =>
+        {
+            options.Github = new LionAbpProGithubOptions
+            {
+                Author = "WangJunZzz",
+                RepositoryName = "abp-vnext-pro",
+                Token = "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"
+            };
+            options.Replace = new LionAbpProReplaceOptions()
+            {
+                OldCompanyName = "Lion",
+                OldProjectName = "AbpPro",
+                ReplaceSuffix = ".sln,.csproj,.cs,.cshtml,.json,.ci,.yml,.yaml,.nswag,.DotSettings,.env",
+                ExcludeFiles = "docs,.github,LICENSE,Readme.md",
+            };
+        });
     }
 }
-//https://www.cnblogs.com/stulzq/p/9127030.html

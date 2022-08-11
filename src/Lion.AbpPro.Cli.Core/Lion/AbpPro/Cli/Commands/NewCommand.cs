@@ -27,15 +27,16 @@ public class NewCommand : IConsoleCommand, ITransientDependency
     {
         if (commandLineArgs.Target.IsNullOrWhiteSpace())
         {
-            _logger.LogInformation(GetUsageInfo());
+            GetUsageInfo();
             return;
         }
 
+        
         //校验是否输入公司名称
         var company = commandLineArgs.Options.GetOrNull(CommandOptions.Company.Short, CommandOptions.Company.Long);
         if (company.IsNullOrWhiteSpace())
         {
-            _logger.LogInformation(GetUsageInfo());
+            GetUsageInfo();
             return;
         }
 
@@ -43,7 +44,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         var project = commandLineArgs.Options.GetOrNull(CommandOptions.Project.Short, CommandOptions.Project.Long);
         if (project.IsNullOrWhiteSpace())
         {
-            _logger.LogInformation(GetUsageInfo());
+            GetUsageInfo();
             return;
         }
 
@@ -59,18 +60,17 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         }
         else
         {
-            _logger.LogInformation(GetUsageInfo());
-            return;
+            _logger.LogError($"{commandLineArgs.Target}模板类型不存在");
+            GetUsageInfo();
         }
     }
 
-    public string GetUsageInfo()
+    public void GetUsageInfo()
     {
         var sb = new StringBuilder();
-
-
+        
         sb.AppendLine("查看命令帮助:");
-        sb.AppendLine("    lion-abp help");
+        sb.AppendLine("    lion.abp help");
         sb.AppendLine("命令列表:");
 
         foreach (var command in _abpCliOptions.Commands.ToArray())
@@ -90,13 +90,14 @@ public class NewCommand : IConsoleCommand, ITransientDependency
             sb.AppendLine(shortDescription);
         }
 
+        _logger.LogInformation(sb.ToString());
+      
 
-        return sb.ToString();
     }
 
     public string GetShortDescription()
     {
-        var message = $"lion-abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        var message = $"lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
         return message;
     }
 }

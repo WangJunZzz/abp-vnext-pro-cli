@@ -15,7 +15,9 @@ public class HelpCommand : IConsoleCommand, ITransientDependency
     private readonly AbpCliOptions _abpCliOptions;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public HelpCommand(IOptions<AbpCliOptions> abpCliOptions, ILogger<HelpCommand> logger, IServiceScopeFactory serviceScopeFactory)
+    public HelpCommand(IOptions<AbpCliOptions> abpCliOptions,
+        ILogger<HelpCommand> logger,
+        IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
@@ -24,24 +26,16 @@ public class HelpCommand : IConsoleCommand, ITransientDependency
 
     public Task ExecuteAsync(CommandLineArgs commandLineArgs)
     {
-        
-        var commandType = _abpCliOptions.Commands[Name];
-
-        using (var scope = _serviceScopeFactory.CreateScope())
-        {
-            var command = (IConsoleCommand)scope.ServiceProvider.GetRequiredService(commandType);
-            _logger.LogInformation(command.GetUsageInfo());
-        }
-
+        GetUsageInfo();
         return Task.CompletedTask;
     }
 
-    public string GetUsageInfo()
+    public void GetUsageInfo()
     {
         var sb = new StringBuilder();
 
         sb.AppendLine("查看命令帮助:");
-        sb.AppendLine("    lion-abp help");
+        sb.AppendLine("    lion.abp help");
         sb.AppendLine("命令列表:");
 
         foreach (var command in _abpCliOptions.Commands.ToArray())
@@ -61,11 +55,11 @@ public class HelpCommand : IConsoleCommand, ITransientDependency
             sb.AppendLine(shortDescription);
         }
 
-        return sb.ToString();
+        _logger.LogInformation(sb.ToString());
     }
 
     public string GetShortDescription()
     {
-        return "lion-abp help";
+        return "lion.abp help";
     }
 }
