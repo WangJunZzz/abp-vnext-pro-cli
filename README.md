@@ -2,14 +2,14 @@
 ```charp
 dotnet tool install Lion.AbpPro.Cli -g
 ```
-## 更新
+## 卸载
 ```charp
 dotnet tool uninstall Lion.AbpPro.Cli -g
 ```
 
 ## 卸载
 ```charp
-dotnet tool uninstall Lion.AbpPro.Cli -g
+dotnet tool update Lion.AbpPro.Cli -g
 ```
 
 
