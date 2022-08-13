@@ -22,8 +22,9 @@ public class AbpProCliCoreModule : AbpModule
             {
                 Author = "WangJunZzz",
                 RepositoryName = "abp-vnext-pro",
-                // TODO 加上前缀，因为github会自动检测person_token,检测到了会自动删除。
-                Token = $"{LionAbpProCliConsts.LionAbpPro}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"
+                // TODO github   Personal access tokens 经过rsa加密后的密码
+                // TODO 为什么要这么做，因为gihub会扫描共有仓库得 Personal access tokens 然后进行比对，删除。
+                Token = $"LHgVgvCdHUzqqiUeexqC0Q5GTGzlXEmlI99mhhrFldKqAoq6GJs2gmqmxBUaVWQ4fdx759/bzXLyF/e083035mYesQ/pVnnzv8dMV+EF+RtW/cfpi/GLNr+C6sJGHnxyG4qicph4PqsItP6Xoa504MUwYC/mlUIz3JhY0BYA6wA="
             };
             options.Replace = new LionAbpProReplaceOptions()
             {

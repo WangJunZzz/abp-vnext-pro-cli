@@ -1,5 +1,6 @@
 ﻿using Lion.AbpPro.Cli.Args;
 using Lion.AbpPro.Cli.Commands;
+using Lion.AbpPro.Cli.Cryptography;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -34,7 +35,7 @@ public class CliService : DomainService
     {
         Logger.LogInformation("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
         Logger.LogInformation("请输入 lion.abp help 查看所有命令");
-        
+   
         //await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
 
         try

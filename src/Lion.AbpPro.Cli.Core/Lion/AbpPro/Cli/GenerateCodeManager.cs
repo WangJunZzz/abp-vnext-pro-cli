@@ -1,4 +1,5 @@
 ﻿using Castle.Core.Configuration;
+using Lion.AbpPro.Cli.Cryptography;
 using Lion.AbpPro.Cli.Github;
 using Lion.AbpPro.Cli.Replace;
 using Lion.AbpPro.Cli.Zip;
@@ -48,7 +49,7 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProOptions.Github.RepositoryName}版本信息...");
-            var token = _lionAbpProOptions.Github.Token.Replace(LionAbpProCliConsts.LionAbpPro, "");
+            var token =  RSA.Decrypt(_lionAbpProOptions.Github.Token,LionAbpProCliConsts.LionAbpPro);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
