@@ -33,7 +33,6 @@ public class NewCommand : IConsoleCommand, ITransientDependency
             return;
         }
 
-        
         //校验是否输入公司名称
         var company = commandLineArgs.Options.GetOrNull(CommandOptions.Company.Short, CommandOptions.Company.Long);
         if (company.IsNullOrWhiteSpace())
