@@ -35,12 +35,22 @@ public class CliService : DomainService
     {
         Logger.LogInformation("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
         Logger.LogInformation("请输入 lion.abp help 查看所有命令");
-   
+
+        if (args == null || args.Length == 0 || args[0].ToLower() != _abpCliOptions.ToolName)
+        {
+            args = new[] { "help" };
+        }
+        else
+        {
+            args = args.Skip(1).ToArray();
+        }
+
         //await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
 
         try
         {
-            await RunInternalAsync();
+            var commandLineArgs = _commandLineArgumentParser.Parse(args);
+            await RunInternalAsync(commandLineArgs);
         }
 
         catch (Exception ex)
@@ -49,36 +59,14 @@ public class CliService : DomainService
         }
     }
 
-    private async Task RunInternalAsync()
+    private async Task RunInternalAsync(CommandLineArgs commandLineArgs)
     {
-        string GetPromptInput()
+        var commandType = _commandSelector.Select(commandLineArgs);
+
+        using (var scope = _serviceScopeFactory.CreateScope())
         {
-            return Console.ReadLine();
+            var command = (IConsoleCommand)scope.ServiceProvider.GetRequiredService(commandType);
+            await command.ExecuteAsync(commandLineArgs);
         }
-
-        var promptInput = GetPromptInput();
-        do
-        {
-            try
-            {
-                var commandArgs = promptInput.Split(" ").Where(x => !x.IsNullOrWhiteSpace() && x != _abpCliOptions.ToolName).ToArray();
-                var commandLineArgs = _commandLineArgumentParser.Parse(commandArgs);
-
-                var commandType = _commandSelector.Select(commandLineArgs);
-
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var command = (IConsoleCommand)scope.ServiceProvider.GetRequiredService(commandType);
-                    await command.ExecuteAsync(commandLineArgs);
-                }
-            }
-
-            catch (Exception ex)
-            {
-                Logger.LogException(ex);
-            }
-
-            promptInput = GetPromptInput();
-        } while (promptInput?.ToLower() != "exit");
     }
 }

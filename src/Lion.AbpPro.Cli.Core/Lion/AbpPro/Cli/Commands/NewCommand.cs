@@ -36,7 +36,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         var company = commandLineArgs.Options.GetOrNull(CommandOptions.Company.Short, CommandOptions.Company.Long);
         if (company.IsNullOrWhiteSpace())
         {
-            GetUsageInfo();
+            _logger.LogError("请输入公司名称");
             return;
         }
 
@@ -44,7 +44,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         var project = commandLineArgs.Options.GetOrNull(CommandOptions.Project.Short, CommandOptions.Project.Long);
         if (project.IsNullOrWhiteSpace())
         {
-            GetUsageInfo();
+            _logger.LogError("请输入项目名称");
             return;
         }
 
@@ -61,7 +61,6 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         else
         {
             _logger.LogError($"{commandLineArgs.Target}模板类型不存在");
-            GetUsageInfo();
         }
     }
 
