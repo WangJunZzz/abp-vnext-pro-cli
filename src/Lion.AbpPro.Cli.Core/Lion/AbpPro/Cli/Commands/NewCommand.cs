@@ -26,7 +26,6 @@ public class NewCommand : IConsoleCommand, ITransientDependency
 
     public async Task ExecuteAsync(CommandLineArgs commandLineArgs)
     {
-        _logger.LogInformation($"6-{JsonConvert.SerializeObject(commandLineArgs)}");
         if (commandLineArgs.Target.IsNullOrWhiteSpace())
         {
             GetUsageInfo();
