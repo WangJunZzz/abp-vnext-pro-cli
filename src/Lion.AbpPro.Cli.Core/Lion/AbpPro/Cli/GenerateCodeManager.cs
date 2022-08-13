@@ -48,7 +48,8 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProOptions.Github.RepositoryName}版本信息...");
-            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, _lionAbpProOptions.Github.Token, version);
+            var token = _lionAbpProOptions.Github.Token.Replace(LionAbpProCliConsts.LionAbpPro, "");
+            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
             output = GetOutput(output, projectName);

@@ -22,7 +22,8 @@ public class AbpProCliCoreModule : AbpModule
             {
                 Author = "WangJunZzz",
                 RepositoryName = "abp-vnext-pro",
-                Token = "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"
+                // TODO 加上前缀，因为github会自动检测person_token,检测到了会自动删除。
+                Token = $"{LionAbpProCliConsts.LionAbpPro}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"
             };
             options.Replace = new LionAbpProReplaceOptions()
             {

@@ -32,8 +32,8 @@ public class CliService : DomainService
 
     public async Task RunAsync(string[] args)
     {
-        Console.WriteLine("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
-        Console.WriteLine("请输入 lion.abp help 查看所有命令");
+        Logger.LogInformation("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
+        Logger.LogInformation("请输入 lion.abp help 查看所有命令");
         
         //await _checkManager.CheckCliVersionAsync(LionAbpProCliConsts.PackageId);
 
