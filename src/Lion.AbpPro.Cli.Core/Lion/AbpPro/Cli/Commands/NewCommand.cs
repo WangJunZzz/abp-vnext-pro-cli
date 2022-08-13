@@ -56,7 +56,6 @@ public class NewCommand : IConsoleCommand, ITransientDependency
 
         if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpPro)
         {
-            _logger.LogInformation($"LionAbpProAsync");
             await _generateCodeManager.LionAbpProAsync(company, project, version, output);
         }
         else

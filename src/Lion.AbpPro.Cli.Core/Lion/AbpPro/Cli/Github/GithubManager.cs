@@ -50,9 +50,11 @@ public class GithubManager : DomainService
 
             if (release != null)
             {
-                var result = new GithubReleaseResult();
-                result.DownloadUrl = new Uri($"https://github.com/{author}/{repositoryName}/archive/refs/tags/{release.TagName}.zip");
-                result.TagName = release.TagName;
+                var result = new GithubReleaseResult
+                {
+                    DownloadUrl = new Uri($"https://github.com/{author}/{repositoryName}/archive/refs/tags/{release.TagName}.zip"),
+                    TagName = release.TagName
+                };
                 return result;
             }
             else
@@ -60,18 +62,9 @@ public class GithubManager : DomainService
                 throw new UserFriendlyException("没有找到最新版本.");
             }
         }
-        catch (NotFoundException)
+        catch (Exception ex)
         {
-            Logger.LogError($"版本不存在.");
-        }
-        catch (RateLimitExceededException)
-        {
-            Logger.LogError($"访问Github API超过了限制，请稍后再试.");
-        }
-        catch (Exception)
-        {
-            Logger.LogError($"获取{repositoryName}失败.");
-            throw;
+            Logger.LogError($"获取{repositoryName}失败.{ex.Message}");
         }
 
         return null;
@@ -115,6 +108,6 @@ public class GithubManager : DomainService
 public class GithubReleaseResult
 {
     public Uri DownloadUrl { get; set; }
-    
+
     public string TagName { get; set; }
 }

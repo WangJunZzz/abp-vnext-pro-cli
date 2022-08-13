@@ -63,7 +63,6 @@ public class CliService : DomainService
             {
                 var commandArgs = promptInput.Split(" ").Where(x => !x.IsNullOrWhiteSpace() && x != _abpCliOptions.ToolName).ToArray();
                 var commandLineArgs = _commandLineArgumentParser.Parse(commandArgs);
-                Logger.LogInformation($"获取到命令:{JsonConvert.SerializeObject(commandLineArgs)}");
 
                 var commandType = _commandSelector.Select(commandLineArgs);
 
