@@ -3,6 +3,7 @@ using Lion.AbpPro.Cli.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Services;
 
@@ -61,6 +62,7 @@ public class CliService : DomainService
             {
                 var commandArgs = promptInput.Split(" ").Where(x => !x.IsNullOrWhiteSpace() && x != _abpCliOptions.ToolName).ToArray();
                 var commandLineArgs = _commandLineArgumentParser.Parse(commandArgs);
+                Logger.LogInformation($"获取到命令:{JsonConvert.SerializeObject(commandLineArgs)}");
 
                 var commandType = _commandSelector.Select(commandLineArgs);
 

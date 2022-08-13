@@ -47,24 +47,25 @@ public class GenerateCodeManager : DomainService
     {
         try
         {
-            Logger.LogInformation($"正在获取{_lionAbpProOptions.Github.RepositoryName}...");
+            Logger.LogInformation($"读取{_lionAbpProOptions.Github.RepositoryName}版本信息...");
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, _lionAbpProOptions.Github.Token, version);
 
-
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
             output = GetOutput(output, projectName);
-            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}项目生成中...");
+            
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProOptions.Github.RepositoryName, release.TagName) + ".zip";
-
+            Logger.LogInformation($"正在下载{_lionAbpProOptions.Github.RepositoryName}源码...");
             // 下载源码路径
             await _githubManager.DownloadAsync(release.DownloadUrl, downFilePath);
-
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}下载完成.");
             // 解压路径
             var targetPath = downFilePath.Replace(".zip", "");
-
+            Logger.LogInformation($"正在解压{_lionAbpProOptions.Github.RepositoryName}...");
             _zipManager.ExtractZips(downFilePath, targetPath);
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}解压完成.");
 
-
+            Logger.LogInformation($"正在生成{_lionAbpProOptions.Github.RepositoryName}...");
             //将解压之后的文件复制到输出目录
             _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProOptions.Github.RepositoryName}-{release.TagName}"), output, _lionAbpProOptions.Replace.ExcludeFiles);
             // 替换文件
@@ -72,8 +73,7 @@ public class GenerateCodeManager : DomainService
                 _lionAbpProOptions.Replace.ReplaceSuffix);
             
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}生成成功.");
-            Logger.LogInformation($"项目地址");
-            Logger.LogInformation($"{output}");
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}输出路径:{output}");
         }
         catch (Exception ex)
         {

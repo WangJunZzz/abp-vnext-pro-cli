@@ -51,7 +51,6 @@ public class GithubManager : DomainService
             if (release != null)
             {
                 var result = new GithubReleaseResult();
-                Logger.LogInformation($"{repositoryName}：{release.TagName}");
                 result.DownloadUrl = new Uri($"https://github.com/{author}/{repositoryName}/archive/refs/tags/{release.TagName}.zip");
                 result.TagName = release.TagName;
                 return result;

@@ -22,7 +22,7 @@ public class AbpProCliCoreModule : AbpModule
             {
                 Author = "WangJunZzz",
                 RepositoryName = "abp-vnext-pro",
-                Token = "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"
+                Token = "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"
             };
             options.Replace = new LionAbpProReplaceOptions()
             {
