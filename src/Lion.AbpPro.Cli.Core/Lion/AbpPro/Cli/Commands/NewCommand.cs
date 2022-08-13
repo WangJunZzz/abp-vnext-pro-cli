@@ -3,6 +3,7 @@ using Lion.AbpPro.Cli.Args;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Volo.Abp.DependencyInjection;
 
 namespace Lion.AbpPro.Cli.Commands;
@@ -25,6 +26,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
 
     public async Task ExecuteAsync(CommandLineArgs commandLineArgs)
     {
+        _logger.LogInformation($"6-{JsonConvert.SerializeObject(commandLineArgs)}");
         if (commandLineArgs.Target.IsNullOrWhiteSpace())
         {
             GetUsageInfo();

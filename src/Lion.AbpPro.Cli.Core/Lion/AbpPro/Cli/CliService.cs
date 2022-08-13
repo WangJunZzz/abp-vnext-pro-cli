@@ -36,6 +36,7 @@ public class CliService : DomainService
         Logger.LogInformation("Lion ABP Pro CLI (https://https://doc.cncore.club/)");
         Logger.LogInformation("请输入 lion.abp help 查看所有命令");
 
+        Logger.LogInformation($"1-{JsonConvert.SerializeObject(args)}");
         if (args == null || args.Length == 0 || args[0].ToLower() != _abpCliOptions.ToolName)
         {
             args = new[] { "help" };
@@ -49,7 +50,9 @@ public class CliService : DomainService
 
         try
         {
+            Logger.LogInformation($"2-{JsonConvert.SerializeObject(args)}");
             var commandLineArgs = _commandLineArgumentParser.Parse(args);
+            Logger.LogInformation($"3-{JsonConvert.SerializeObject(commandLineArgs)}");
             await RunInternalAsync(commandLineArgs);
         }
 
@@ -62,10 +65,11 @@ public class CliService : DomainService
     private async Task RunInternalAsync(CommandLineArgs commandLineArgs)
     {
         var commandType = _commandSelector.Select(commandLineArgs);
-
+        Logger.LogInformation($"4-{JsonConvert.SerializeObject(commandType)}");
         using (var scope = _serviceScopeFactory.CreateScope())
         {
             var command = (IConsoleCommand)scope.ServiceProvider.GetRequiredService(commandType);
+            Logger.LogInformation($"5-{JsonConvert.SerializeObject(command)}");
             await command.ExecuteAsync(commandLineArgs);
         }
     }
