@@ -58,6 +58,14 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         {
             await _generateCodeManager.LionAbpProAsync(company, project, version, output);
         }
+        else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProBasic)
+        {
+            await _generateCodeManager.LionAbpProBasicAsync(company, project, version, output);
+        }
+        else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProBasicNoOcelot)
+        {
+            await _generateCodeManager.LionAbpProBasicNoOcelotAsync(company, project, version, output);
+        }
         else
         {
             _logger.LogError($"{commandLineArgs.Target}模板类型不存在");
@@ -67,7 +75,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
     public void GetUsageInfo()
     {
         var sb = new StringBuilder();
-        
+
         sb.AppendLine("查看命令帮助:");
         sb.AppendLine("    lion.abp help");
         sb.AppendLine("命令列表:");
@@ -90,13 +98,16 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         }
 
         _logger.LogInformation(sb.ToString());
-      
-
     }
 
     public string GetShortDescription()
     {
-        var message = $"lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        var message = Environment.NewLine;
+        message += $"           > lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += Environment.NewLine;
+        message += $"           > lion.abp new abp-vnext-pro-basic -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += Environment.NewLine;
+        message += $"           > lion.abp new abp-vnext-pro-basic-no-ocelot -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
         return message;
     }
 }

@@ -3,6 +3,8 @@
 public class LionAbpProCliConsts
 {
     public const string LionAbpPro = "abp-vnext-pro";
+    public const string LionAbpProBasic = "abp-vnext-pro-basic";
+    public const string LionAbpProBasicNoOcelot = "abp-vnext-pro-basic-no-ocelot";
     
     public const string PackageId = "Lion.AbpPro.Cli";
     
