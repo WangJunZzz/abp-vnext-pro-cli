@@ -106,6 +106,7 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicTemplateOptions.Github.RepositoryName}版本信息...");
+            
             var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicTemplateOptions.Github.Author, _lionAbpProBasicTemplateOptions.Github.RepositoryName, token, version);
 
@@ -157,6 +158,7 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本信息...");
+            
             var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token, version);
 
