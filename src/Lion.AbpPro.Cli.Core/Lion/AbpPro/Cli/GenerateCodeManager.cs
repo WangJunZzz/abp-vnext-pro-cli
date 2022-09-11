@@ -58,7 +58,8 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProOptions.Github.RepositoryName}版本信息...");
-            var token = RSA.Decrypt(_lionAbpProOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
+            //var token = RSA.Decrypt(_lionAbpProOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
+            var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
@@ -108,7 +109,8 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicTemplateOptions.Github.RepositoryName}版本信息...");
-            var token = RSA.Decrypt(_lionAbpProBasicTemplateOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
+            
+            var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicTemplateOptions.Github.Author, _lionAbpProBasicTemplateOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
@@ -159,9 +161,9 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本信息...");
-            var token = RSA.Decrypt(_lionAbpProBasicNoOcelotTemplateOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
-            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token,
-                version);
+            
+            var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
+            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
             output = GetOutput(output, projectName);

@@ -24,7 +24,7 @@ public class AbpProCliCoreModule : AbpModule
                 RepositoryName = "abp-vnext-pro",
                 // TODO github   Personal access tokens 经过rsa加密后的密码
                 // TODO 为什么要这么做，因为gihub会扫描共有仓库得 Personal access tokens 然后进行比对，删除。
-                Token = $"LHgVgvCdHUzqqiUeexqC0Q5GTGzlXEmlI99mhhrFldKqAoq6GJs2gmqmxBUaVWQ4fdx759/bzXLyF/e083035mYesQ/pVnnzv8dMV+EF+RtW/cfpi/GLNr+C6sJGHnxyG4qicph4PqsItP6Xoa504MUwYC/mlUIz3JhY0BYA6wA="
+                Token = "abp-vnext-proghp_47vqiabp-vnext-provNkHKJguOJkdHvnxUabp-vnext-protij7Qbdn1Qy3fUabp-vnext-pro"
             };
             options.Replace = new LionAbpProReplaceOptions()
             {
@@ -38,11 +38,12 @@ public class AbpProCliCoreModule : AbpModule
         {
             options.Github = new LionAbpProBasicTemplateGithubOptions
             {
+                // abp-vnext-pro_ghp_abp-vnext-pro_47vqivNkHKJguOJkdHvnxUtij7Qbdn1Qy3fU_abp-vnext-pro
                 Author = "WangJunZzz",
                 RepositoryName = "abp-vnext-pro-templates",
                 // TODO github   Personal access tokens 经过rsa加密后的密码
                 // TODO 为什么要这么做，因为gihub会扫描共有仓库得 Personal access tokens 然后进行比对，删除。
-                Token = $"LHgVgvCdHUzqqiUeexqC0Q5GTGzlXEmlI99mhhrFldKqAoq6GJs2gmqmxBUaVWQ4fdx759/bzXLyF/e083035mYesQ/pVnnzv8dMV+EF+RtW/cfpi/GLNr+C6sJGHnxyG4qicph4PqsItP6Xoa504MUwYC/mlUIz3JhY0BYA6wA="
+                Token = "abp-vnext-proghp_47vqiabp-vnext-provNkHKJguOJkdHvnxUabp-vnext-protij7Qbdn1Qy3fUabp-vnext-pro"
             };
             options.Replace = new LionAbpProBasicTemplateReplaceOptions()
             {
@@ -60,7 +61,7 @@ public class AbpProCliCoreModule : AbpModule
                 RepositoryName = "abp-vnext-pro-templates",
                 // TODO github   Personal access tokens 经过rsa加密后的密码
                 // TODO 为什么要这么做，因为gihub会扫描共有仓库得 Personal access tokens 然后进行比对，删除。
-                Token = $"LHgVgvCdHUzqqiUeexqC0Q5GTGzlXEmlI99mhhrFldKqAoq6GJs2gmqmxBUaVWQ4fdx759/bzXLyF/e083035mYesQ/pVnnzv8dMV+EF+RtW/cfpi/GLNr+C6sJGHnxyG4qicph4PqsItP6Xoa504MUwYC/mlUIz3JhY0BYA6wA="
+                Token = "abp-vnext-proghp_47vqiabp-vnext-provNkHKJguOJkdHvnxUabp-vnext-protij7Qbdn1Qy3fUabp-vnext-pro"
             };
             options.Replace = new LionAbpProBasicNoOcelotTemplateReplaceOptions()
             {
