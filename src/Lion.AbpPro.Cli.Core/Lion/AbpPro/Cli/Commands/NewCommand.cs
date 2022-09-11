@@ -66,6 +66,18 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         {
             await _generateCodeManager.LionAbpProBasicNoOcelotAsync(company, project, version, output);
         }
+        else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProModule)
+        {
+            //校验是否输入模块名称
+            var module = commandLineArgs.Options.GetOrNull(CommandOptions.Module.Short, CommandOptions.Module.Long);
+            if (module.IsNullOrWhiteSpace())
+            {
+                _logger.LogError("请输入模块名称");
+                return;
+            }
+
+            await _generateCodeManager.LionAbpProModuleAsync(company, project, module, version, output);
+        }
         else
         {
             _logger.LogError($"{commandLineArgs.Target}模板类型不存在");
@@ -108,6 +120,8 @@ public class NewCommand : IConsoleCommand, ITransientDependency
         message += $"           > lion.abp new abp-vnext-pro-basic -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
         message += Environment.NewLine;
         message += $"           > lion.abp new abp-vnext-pro-basic-no-ocelot -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += Environment.NewLine;
+        message += $"           > lion.abp new abp-vnext-pro-module -c 公司名称 -p 项目名称 -m 模块名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
         return message;
     }
 }

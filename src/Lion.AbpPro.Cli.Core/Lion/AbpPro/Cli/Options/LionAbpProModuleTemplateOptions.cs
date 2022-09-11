@@ -1,13 +1,13 @@
 ﻿namespace Lion.AbpPro.Cli;
 
-public class LionAbpProBasicNoOcelotTemplateOptions
+public class LionAbpProModuleTemplateOptions
 {
-    public LionAbpProBasicTemplateGithubOptions Github { get; set; }
+    public LionAbpProModuleTemplateGithubOptions Github { get; set; }
 
-    public LionAbpProBasicTemplateReplaceOptions Replace { get; set; }
+    public LionAbpProModuleTemplateReplaceOptions Replace { get; set; }
 }
 
-public class LionAbpProBasicNoOcelotTemplateGithubOptions
+public class LionAbpProModuleTemplateGithubOptions
 {
     public string Author { get; set; }
 
@@ -16,11 +16,13 @@ public class LionAbpProBasicNoOcelotTemplateGithubOptions
     public string Token { get; set; }
 }
 
-public class LionAbpProBasicNoOcelotTemplateReplaceOptions
+public class LionAbpProModuleTemplateReplaceOptions
 {
     public string OldCompanyName { get; set; }
 
     public string OldProjectName { get; set; }
+    
+    public string OldModuleName { get; set; }
 
     /// <summary>
     /// 需要替换的文件

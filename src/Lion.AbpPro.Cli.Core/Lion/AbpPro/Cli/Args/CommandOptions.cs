@@ -20,7 +20,15 @@ public static class CommandOptions
         public const string Long = "project";
     }
 
-
+    /// <summary>
+    /// 模块名称
+    /// </summary>
+    public static class Module
+    {
+        public const string Short = "m";
+        public const string Long = "modulle";
+    }
+    
     /// <summary>
     /// 输出目录
     /// </summary>

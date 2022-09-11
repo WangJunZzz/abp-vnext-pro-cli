@@ -16,6 +16,7 @@ public class GenerateCodeManager : DomainService
     private readonly LionAbpProOptions _lionAbpProOptions;
     private readonly LionAbpProBasicTemplateOptions _lionAbpProBasicTemplateOptions;
     private readonly LionAbpProBasicNoOcelotTemplateOptions _lionAbpProBasicNoOcelotTemplateOptions;
+    private readonly LionAbpProModuleTemplateOptions _lionAbpProModuleTemplateOptions;
     private readonly GithubManager _githubManager;
     private readonly ZipManager _zipManager;
     private readonly ReplaceManager _replaceManager;
@@ -28,12 +29,14 @@ public class GenerateCodeManager : DomainService
         ReplaceManager replaceManager,
         FileManager fileManager,
         IOptions<LionAbpProBasicTemplateOptions> lionAbpProBasicTemplateOptions,
-        IOptions<LionAbpProBasicNoOcelotTemplateOptions> lionAbpProBasicNoOcelotTemplateOptions)
+        IOptions<LionAbpProBasicNoOcelotTemplateOptions> lionAbpProBasicNoOcelotTemplateOptions, 
+        IOptions<LionAbpProModuleTemplateOptions> lionAbpProModuleTemplateOptions)
     {
         _githubManager = githubManager;
         _zipManager = zipManager;
         _replaceManager = replaceManager;
         _fileManager = fileManager;
+        _lionAbpProModuleTemplateOptions = lionAbpProModuleTemplateOptions.Value;
         _lionAbpProBasicNoOcelotTemplateOptions = lionAbpProBasicNoOcelotTemplateOptions.Value;
         _lionAbpProBasicTemplateOptions = lionAbpProBasicTemplateOptions.Value;
         _lionAbpProOptions = lionAbpProOptions.Value;
@@ -140,7 +143,7 @@ public class GenerateCodeManager : DomainService
         }
     }
 
-        /// <summary>
+    /// <summary>
     /// 生成Abp-Vnext-Pro-Basic
     /// </summary>
     /// <param name="companyName">公司名称</param>
@@ -157,7 +160,8 @@ public class GenerateCodeManager : DomainService
         {
             Logger.LogInformation($"读取{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本信息...");
             var token = RSA.Decrypt(_lionAbpProBasicNoOcelotTemplateOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
-            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token, version);
+            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token,
+                version);
 
             Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
             output = GetOutput(output, projectName);
@@ -179,7 +183,8 @@ public class GenerateCodeManager : DomainService
             _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
                 _lionAbpProBasicNoOcelotTemplateOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldProjectName, companyName, projectName,
+            _replaceManager.ReplaceTemplates(output, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldProjectName, companyName,
+                projectName,
                 _lionAbpProBasicNoOcelotTemplateOptions.Replace.ReplaceSuffix);
 
             Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}生成成功.");
@@ -190,7 +195,68 @@ public class GenerateCodeManager : DomainService
             Logger.LogError($"程序异常：{ex.Message}");
         }
     }
-        
+
+
+    /// <summary>
+    /// 生成Abp-Vnext-Pro-Module
+    /// </summary>
+    /// <param name="companyName">公司名称</param>
+    /// <param name="projectName">项目名称</param>
+    /// <param name="moduleName">模块名称</param>
+    /// <param name="version">版本</param>
+    /// <param name="output">输出路径</param>
+    public async Task LionAbpProModuleAsync(
+        string companyName,
+        string projectName,
+        string moduleName,
+        string version,
+        string output)
+    {
+        try
+        {
+            Logger.LogInformation($"读取{_lionAbpProModuleTemplateOptions.Github.RepositoryName}版本信息...");
+            var token = RSA.Decrypt(_lionAbpProModuleTemplateOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
+            var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProModuleTemplateOptions.Github.Author, _lionAbpProModuleTemplateOptions.Github.RepositoryName, token,
+                version);
+
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
+            output = GetOutput(output, projectName);
+
+            // 源码下载路径
+            var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProModuleTemplateOptions.Github.RepositoryName, release.TagName) + ".zip";
+            Logger.LogInformation($"正在下载{_lionAbpProModuleTemplateOptions.Github.RepositoryName}源码...");
+            // 下载源码路径
+            await _githubManager.DownloadAsync(release.DownloadUrl, downFilePath);
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}下载完成.");
+            // 解压路径
+            var targetPath = downFilePath.Replace(".zip", "");
+            Logger.LogInformation($"正在解压{_lionAbpProModuleTemplateOptions.Github.RepositoryName}...");
+            _zipManager.ExtractZips(downFilePath, targetPath);
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}解压完成.");
+
+            Logger.LogInformation($"正在生成{_lionAbpProModuleTemplateOptions.Github.RepositoryName}...");
+            //将解压之后的文件复制到输出目录
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
+                _lionAbpProModuleTemplateOptions.Replace.ExcludeFiles);
+            // 替换文件
+            _replaceManager.ReplaceTemplates(output, 
+                _lionAbpProModuleTemplateOptions.Replace.OldCompanyName, 
+                _lionAbpProModuleTemplateOptions.Replace.OldProjectName, 
+                _lionAbpProModuleTemplateOptions.Replace.OldModuleName, 
+                companyName,
+                projectName,
+                moduleName,
+                _lionAbpProModuleTemplateOptions.Replace.ReplaceSuffix);
+
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}生成成功.");
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}输出路径:{output}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"程序异常：{ex.Message}");
+        }
+    }
+
     /// <summary>
     /// 获取代码输出路径
     /// </summary>
