@@ -24,7 +24,7 @@ public class ReplaceManager : DomainService
         {
             RenameTemplate(sourcePath, oldCompanyName, oldProjectName, oldModuleName, companyName, projectName, moduleName, replaceSuffix);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw new UserFriendlyException("生成模板失败");
         }

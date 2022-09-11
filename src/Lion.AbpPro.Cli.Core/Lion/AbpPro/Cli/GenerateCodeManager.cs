@@ -253,7 +253,7 @@ public class GenerateCodeManager : DomainService
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}生成成功.");
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}输出路径:{output}");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             Logger.LogError($"程序异常：{ex.Message}");
         }
