@@ -217,7 +217,7 @@ public class GenerateCodeManager : DomainService
         try
         {
             Logger.LogInformation($"读取{_lionAbpProModuleTemplateOptions.Github.RepositoryName}版本信息...");
-            var token = RSA.Decrypt(_lionAbpProModuleTemplateOptions.Github.Token, LionAbpProCliConsts.LionAbpPro);
+            var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProModuleTemplateOptions.Github.Author, _lionAbpProModuleTemplateOptions.Github.RepositoryName, token,
                 version);
 
@@ -253,7 +253,7 @@ public class GenerateCodeManager : DomainService
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}生成成功.");
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}输出路径:{output}");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Logger.LogError($"程序异常：{ex.Message}");
         }
