@@ -50,7 +50,7 @@ public class AbpProCliCoreModule : AbpModule
                 OldCompanyName = "MyCompanyName",
                 OldProjectName = "MyProjectName",
                 ReplaceSuffix = ".sln,.csproj,.cs,.cshtml,.json,.ci,.yml,.yaml,.nswag,.DotSettings,.env",
-                ExcludeFiles = "abp-vnext-pro-basic-no-ocelot-nuget,LICENSE,Readme.md",
+                ExcludeFiles = "abp-vnext-pro-basic-no-ocelot-nuget,LICENSE,Readme.md,abp-vnext-pro-module",
             };
         });
         context.Services.Configure<LionAbpProBasicNoOcelotTemplateOptions>(options =>
@@ -68,7 +68,7 @@ public class AbpProCliCoreModule : AbpModule
                 OldCompanyName = "MyCompanyName",
                 OldProjectName = "MyProjectName",
                 ReplaceSuffix = ".sln,.csproj,.cs,.cshtml,.json,.ci,.yml,.yaml,.nswag,.DotSettings,.env",
-                ExcludeFiles = "abp-vnext-pro-basic-nuget,LICENSE,Readme.md",
+                ExcludeFiles = "abp-vnext-pro-basic-nuget,LICENSE,Readme.md,abp-vnext-pro-module",
             };
         });
         
