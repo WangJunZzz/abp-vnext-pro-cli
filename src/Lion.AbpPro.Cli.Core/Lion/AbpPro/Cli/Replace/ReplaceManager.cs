@@ -12,9 +12,9 @@ public class ReplaceManager : DomainService
         {
             RenameTemplate(sourcePath, oldCompanyName, oldProjectName, companyName, projectName, replaceSuffix);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new UserFriendlyException("生成模板失败");
+            throw new UserFriendlyException($"生成模板失败{ex.Message}");
         }
     }
 
@@ -24,9 +24,9 @@ public class ReplaceManager : DomainService
         {
             RenameTemplate(sourcePath, oldCompanyName, oldProjectName, oldModuleName, companyName, projectName, moduleName, replaceSuffix);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new UserFriendlyException("生成模板失败");
+            throw new UserFriendlyException($"生成模板失败{ex.Message}");
         }
     }
 
@@ -149,7 +149,7 @@ public class ReplaceManager : DomainService
             // 文件名包含模板关键字
             if (fileInfo.Name.Contains(oldCompanyName)
                 || fileInfo.Name.Contains(oldProjectName)
-                ||  fileInfo.Name.Contains(oldModuleName))
+                || fileInfo.Name.Contains(oldModuleName))
             {
                 var oldFileName = fileInfo.Name;
                 var newFileName = oldFileName.CustomReplace(oldCompanyName, oldProjectName, oldModuleName, companyName, projectName, moduleName);
@@ -169,7 +169,7 @@ public class ReplaceManager : DomainService
 
         foreach (var subDirectory in Directory.GetDirectories(sourcePath))
         {
-            RenameAllFileNameAndContent(subDirectory, oldCompanyName, oldProjectName,oldModuleName, companyName, projectName,moduleName, replaceSuffix);
+            RenameAllFileNameAndContent(subDirectory, oldCompanyName, oldProjectName, oldModuleName, companyName, projectName, moduleName, replaceSuffix);
         }
     }
 }

@@ -48,12 +48,12 @@ public class GenerateCodeManager : DomainService
     /// <param name="companyName">公司名称</param>
     /// <param name="projectName">项目名称</param>
     /// <param name="version">版本</param>
-    /// <param name="output">输出路径</param>
+    /// <param name="outputPath">输出路径</param>
     public async Task LionAbpProAsync(
         string companyName,
         string projectName,
         string version,
-        string output)
+        string outputPath)
     {
         try
         {
@@ -63,7 +63,7 @@ public class GenerateCodeManager : DomainService
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
-            output = GetOutput(output, projectName);
+            outputPath = GetOutput(CliPaths.AbpRootPath, projectName);
 
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProOptions.Github.RepositoryName, release.TagName) + ".zip";
@@ -79,13 +79,13 @@ public class GenerateCodeManager : DomainService
 
             Logger.LogInformation($"正在生成{_lionAbpProOptions.Github.RepositoryName}...");
             //将解压之后的文件复制到输出目录
-            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProOptions.Github.RepositoryName}-{release.TagName}"), output, _lionAbpProOptions.Replace.ExcludeFiles);
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProOptions.Github.RepositoryName}-{release.TagName}"), outputPath, _lionAbpProOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output, _lionAbpProOptions.Replace.OldCompanyName, _lionAbpProOptions.Replace.OldProjectName, companyName, projectName,
+            _replaceManager.ReplaceTemplates(outputPath, _lionAbpProOptions.Replace.OldCompanyName, _lionAbpProOptions.Replace.OldProjectName, companyName, projectName,
                 _lionAbpProOptions.Replace.ReplaceSuffix);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}生成成功.");
-            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}输出路径:{output}");
+            Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}输出路径:{outputPath}");
         }
         catch (Exception ex)
         {
@@ -265,25 +265,32 @@ public class GenerateCodeManager : DomainService
     /// <param name="output">-o 用户输入地址</param>
     /// <param name="projectName">项目名称</param>
     /// <returns>string</returns>
-    private string GetOutput(string output,
-        string projectName)
+    private string GetOutput(string output, string projectName)
     {
-        if (output.IsNullOrWhiteSpace())
+        var path=Path.Combine(CliPaths.AbpRootPath, projectName);
+        if (Directory.Exists(path))
         {
-            output = Path.Combine(Directory.GetCurrentDirectory(), projectName);
-        }
-        else
-        {
-            if (Path.IsPathRooted(output))
-            {
-                output = Path.Combine(output, projectName);
-            }
-            else
-            {
-                output = Path.Combine(Directory.GetCurrentDirectory(), output, projectName);
-            }
+            Directory.Delete(path,true);
         }
 
-        return output;
+        Directory.CreateDirectory(projectName);
+        return path;
+        // if (output.IsNullOrWhiteSpace())
+        // {
+        //     output = Path.Combine(CliPaths.AbpRootPath, projectName);
+        // }
+        // else
+        // {
+        //     if (Path.IsPathRooted(output))
+        //     {
+        //         output = Path.Combine(output, projectName);
+        //     }
+        //     else
+        //     {
+        //         output = Path.Combine(Directory.GetCurrentDirectory(), output, projectName);
+        //     }
+        // }
+        //
+        // return output;
     }
 }
