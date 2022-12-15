@@ -11,7 +11,7 @@ using Volo.Abp.Domain.Services;
 
 namespace Lion.AbpPro.Cli;
 
-public class GenerateCodeManager : DomainService
+public class GenerateCodeManager : GenerateCodeBase
 {
     private readonly LionAbpProOptions _lionAbpProOptions;
     private readonly LionAbpProBasicTemplateOptions _lionAbpProBasicTemplateOptions;
@@ -29,7 +29,7 @@ public class GenerateCodeManager : DomainService
         ReplaceManager replaceManager,
         FileManager fileManager,
         IOptions<LionAbpProBasicTemplateOptions> lionAbpProBasicTemplateOptions,
-        IOptions<LionAbpProBasicNoOcelotTemplateOptions> lionAbpProBasicNoOcelotTemplateOptions, 
+        IOptions<LionAbpProBasicNoOcelotTemplateOptions> lionAbpProBasicNoOcelotTemplateOptions,
         IOptions<LionAbpProModuleTemplateOptions> lionAbpProModuleTemplateOptions)
     {
         _githubManager = githubManager;
@@ -48,12 +48,10 @@ public class GenerateCodeManager : DomainService
     /// <param name="companyName">公司名称</param>
     /// <param name="projectName">项目名称</param>
     /// <param name="version">版本</param>
-    /// <param name="outputPath">输出路径</param>
     public async Task LionAbpProAsync(
         string companyName,
         string projectName,
-        string version,
-        string outputPath)
+        string version)
     {
         try
         {
@@ -63,7 +61,7 @@ public class GenerateCodeManager : DomainService
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProOptions.Github.Author, _lionAbpProOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProOptions.Github.RepositoryName}版本:{release.TagName}.");
-            outputPath = GetOutput(CliPaths.AbpRootPath, projectName);
+            var outputPath = GetOutputPath(projectName);
 
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProOptions.Github.RepositoryName, release.TagName) + ".zip";
@@ -99,22 +97,20 @@ public class GenerateCodeManager : DomainService
     /// <param name="companyName">公司名称</param>
     /// <param name="projectName">项目名称</param>
     /// <param name="version">版本</param>
-    /// <param name="output">输出路径</param>
     public async Task LionAbpProBasicAsync(
         string companyName,
         string projectName,
-        string version,
-        string output)
+        string version)
     {
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicTemplateOptions.Github.RepositoryName}版本信息...");
-            
+
             var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicTemplateOptions.Github.Author, _lionAbpProBasicTemplateOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
-            output = GetOutput(output, projectName);
+            var outputPath = GetOutputPath(projectName);
 
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProBasicTemplateOptions.Github.RepositoryName, release.TagName) + ".zip";
@@ -130,14 +126,14 @@ public class GenerateCodeManager : DomainService
 
             Logger.LogInformation($"正在生成{_lionAbpProBasicTemplateOptions.Github.RepositoryName}...");
             //将解压之后的文件复制到输出目录
-            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}-{release.TagName}"), outputPath,
                 _lionAbpProBasicTemplateOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output, _lionAbpProBasicTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicTemplateOptions.Replace.OldProjectName, companyName, projectName,
+            _replaceManager.ReplaceTemplates(outputPath, _lionAbpProBasicTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicTemplateOptions.Replace.OldProjectName, companyName, projectName,
                 _lionAbpProBasicTemplateOptions.Replace.ReplaceSuffix);
 
             Logger.LogInformation($"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}生成成功.");
-            Logger.LogInformation($"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}输出路径:{output}");
+            Logger.LogInformation($"{_lionAbpProBasicTemplateOptions.Github.RepositoryName}输出路径:{outputPath}");
         }
         catch (Exception ex)
         {
@@ -151,22 +147,20 @@ public class GenerateCodeManager : DomainService
     /// <param name="companyName">公司名称</param>
     /// <param name="projectName">项目名称</param>
     /// <param name="version">版本</param>
-    /// <param name="output">输出路径</param>
     public async Task LionAbpProBasicNoOcelotAsync(
         string companyName,
         string projectName,
-        string version,
-        string output)
+        string version)
     {
         try
         {
             Logger.LogInformation($"读取{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本信息...");
-            
+
             var token = Token.Decrypt(_lionAbpProOptions.Github.Token);
             var release = await _githubManager.GetReleaseVersionUrlAsync(_lionAbpProBasicNoOcelotTemplateOptions.Github.Author, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, token, version);
 
             Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
-            output = GetOutput(output, projectName);
+            var outputPath = GetOutputPath(projectName);
 
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName, release.TagName) + ".zip";
@@ -182,15 +176,15 @@ public class GenerateCodeManager : DomainService
 
             Logger.LogInformation($"正在生成{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}...");
             //将解压之后的文件复制到输出目录
-            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}-{release.TagName}"), outputPath,
                 _lionAbpProBasicNoOcelotTemplateOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldProjectName, companyName,
+            _replaceManager.ReplaceTemplates(outputPath, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldCompanyName, _lionAbpProBasicNoOcelotTemplateOptions.Replace.OldProjectName, companyName,
                 projectName,
                 _lionAbpProBasicNoOcelotTemplateOptions.Replace.ReplaceSuffix);
 
             Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}生成成功.");
-            Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}输出路径:{output}");
+            Logger.LogInformation($"{_lionAbpProBasicNoOcelotTemplateOptions.Github.RepositoryName}输出路径:{outputPath}");
         }
         catch (Exception ex)
         {
@@ -222,7 +216,7 @@ public class GenerateCodeManager : DomainService
                 version);
 
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}版本:{release.TagName}.");
-            output = GetOutput(output, projectName);
+            var outputPath = GetOutputPath(projectName);
 
             // 源码下载路径
             var downFilePath = Path.Combine(CliPaths.AbpRootPath, _lionAbpProModuleTemplateOptions.Github.RepositoryName, release.TagName) + ".zip";
@@ -241,56 +235,21 @@ public class GenerateCodeManager : DomainService
             _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
                 _lionAbpProModuleTemplateOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output, 
-                _lionAbpProModuleTemplateOptions.Replace.OldCompanyName, 
-                _lionAbpProModuleTemplateOptions.Replace.OldProjectName, 
-                _lionAbpProModuleTemplateOptions.Replace.OldModuleName, 
+            _replaceManager.ReplaceTemplates(output,
+                _lionAbpProModuleTemplateOptions.Replace.OldCompanyName,
+                _lionAbpProModuleTemplateOptions.Replace.OldProjectName,
+                _lionAbpProModuleTemplateOptions.Replace.OldModuleName,
                 companyName,
                 projectName,
                 moduleName,
                 _lionAbpProModuleTemplateOptions.Replace.ReplaceSuffix);
 
             Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}生成成功.");
-            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}输出路径:{output}");
+            Logger.LogInformation($"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}输出路径:{outputPath}");
         }
         catch (Exception ex)
         {
             Logger.LogError($"程序异常：{ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// 获取代码输出路径
-    /// </summary>
-    /// <param name="output">-o 用户输入地址</param>
-    /// <param name="projectName">项目名称</param>
-    /// <returns>string</returns>
-    private string GetOutput(string output, string projectName)
-    {
-        var path=Path.Combine(CliPaths.AbpRootPath, projectName);
-        if (Directory.Exists(path))
-        {
-            Directory.Delete(path,true);
-        }
-
-        Directory.CreateDirectory(projectName);
-        return path;
-        // if (output.IsNullOrWhiteSpace())
-        // {
-        //     output = Path.Combine(CliPaths.AbpRootPath, projectName);
-        // }
-        // else
-        // {
-        //     if (Path.IsPathRooted(output))
-        //     {
-        //         output = Path.Combine(output, projectName);
-        //     }
-        //     else
-        //     {
-        //         output = Path.Combine(Directory.GetCurrentDirectory(), output, projectName);
-        //     }
-        // }
-        //
-        // return output;
     }
 }

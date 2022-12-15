@@ -56,15 +56,15 @@ public class NewCommand : IConsoleCommand, ITransientDependency
 
         if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpPro)
         {
-            await _generateCodeManager.LionAbpProAsync(company, project, version, output);
+            await _generateCodeManager.LionAbpProAsync(company, project, version);
         }
         else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProBasic)
         {
-            await _generateCodeManager.LionAbpProBasicAsync(company, project, version, output);
+            await _generateCodeManager.LionAbpProBasicAsync(company, project, version);
         }
         else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProBasicNoOcelot)
         {
-            await _generateCodeManager.LionAbpProBasicNoOcelotAsync(company, project, version, output);
+            await _generateCodeManager.LionAbpProBasicNoOcelotAsync(company, project, version);
         }
         else if (commandLineArgs.Target == LionAbpProCliConsts.LionAbpProModule)
         {
@@ -115,13 +115,13 @@ public class NewCommand : IConsoleCommand, ITransientDependency
     public string GetShortDescription()
     {
         var message = Environment.NewLine;
-        message += $"           > lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += $"           > lion.abp new abp-vnext-pro -c 公司名称 -p 项目名称 -v 版本(默认LastRelease)";
         message += Environment.NewLine;
-        message += $"           > lion.abp new abp-vnext-pro-basic -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += $"           > lion.abp new abp-vnext-pro-basic -c 公司名称 -p 项目名称 -v 版本(默认LastRelease)";
         message += Environment.NewLine;
-        message += $"           > lion.abp new abp-vnext-pro-basic-no-ocelot -c 公司名称 -p 项目名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += $"           > lion.abp new abp-vnext-pro-basic-no-ocelot -c 公司名称 -p 项目名称 -v 版本(默认LastRelease)";
         message += Environment.NewLine;
-        message += $"           > lion.abp new abp-vnext-pro-module -c 公司名称 -p 项目名称 -m 模块名称 -v 版本(默认LastRelease) -o 项目输出路径(可选).";
+        message += $"           > lion.abp new abp-vnext-pro-module -c 公司名称 -p 项目名称 -m 模块名称 -v 版本(默认LastRelease)";
         return message;
     }
 }
