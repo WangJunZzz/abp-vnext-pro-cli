@@ -76,7 +76,7 @@ public class NewCommand : IConsoleCommand, ITransientDependency
                 return;
             }
 
-            await _generateCodeManager.LionAbpProModuleAsync(company, project, module, version, output);
+            await _generateCodeManager.LionAbpProModuleAsync(company, project, module, version);
         }
         else
         {

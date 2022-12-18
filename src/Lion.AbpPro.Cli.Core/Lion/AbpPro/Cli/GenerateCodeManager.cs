@@ -205,8 +205,7 @@ public class GenerateCodeManager : GenerateCodeBase
         string companyName,
         string projectName,
         string moduleName,
-        string version,
-        string output)
+        string version)
     {
         try
         {
@@ -232,10 +231,10 @@ public class GenerateCodeManager : GenerateCodeBase
 
             Logger.LogInformation($"正在生成{_lionAbpProModuleTemplateOptions.Github.RepositoryName}...");
             //将解压之后的文件复制到输出目录
-            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}-{release.TagName}"), output,
+            _fileManager.CopyFolder(Path.Combine(targetPath, $"{_lionAbpProModuleTemplateOptions.Github.RepositoryName}-{release.TagName}"), outputPath,
                 _lionAbpProModuleTemplateOptions.Replace.ExcludeFiles);
             // 替换文件
-            _replaceManager.ReplaceTemplates(output,
+            _replaceManager.ReplaceTemplates(outputPath,
                 _lionAbpProModuleTemplateOptions.Replace.OldCompanyName,
                 _lionAbpProModuleTemplateOptions.Replace.OldProjectName,
                 _lionAbpProModuleTemplateOptions.Replace.OldModuleName,
